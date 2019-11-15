@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crowd.ssm.user.dao.IAdverteDao">
+    <resultMap id="advMapp" type="com.crowd.ssm.user.service.bo.Adverte">
+        <id property="advId" column="adv_id"/>
+        <result property="advDesc" column="adv_desc"/>
+        <result property="advTime" column="adv_time"/>
+    </resultMap>
+    <select id="findAll" resultMap="advMapp">
+        select * from auth_adv
+    </select>
+</mapper>

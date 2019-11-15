@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crowd.ssm.money.dao.IMoneyDao">
+    <resultMap id="money" type="com.crowd.ssm.money.service.bo.Money" >
+        <id column="id" property="id"></id>
+        <result property="types" column="types"></result>
+        <result property="money" column="money"></result>
+        <result property="descs" column="descs"></result>
+        <result property="img" column="img"></result>
+        <result property="num" column="num"></result>
+        <result property="limits" column="limits"></result>
+        <result property="cost" column="cost"></result>
+        <result property="bill" column="bill"></result>
+        <result property="rewardTime" column="reward_time"></result>
+        <result property="goodId" column="good_id"></result>
+    </resultMap>
+    <resultMap id="moneyAndUser" type="com.crowd.ssm.money.service.bo.Money" extends="money">
+              <collection property="users" ofType="com.crowd.ssm.user.service.bo.User" >
+                  <id property="userId" column="user_id"></id>
+                 <result property="userCompany" column="user_company"></result>
+              </collection>
+            <collection property="goods" ofType="com.crowd.ssm.good.service.bo.Good" >
+                <id column="good_id" property="goodId"/>
+                <result column="good_name" property="goodName"/>
+             </collection>
+    </resultMap>
+
+    <select id="getMoneyById"  resultMap="moneyAndUser" >
+            select
+             r.id,r.money,r.cost,r.descs,u1.user_company,g1.good_name,u1.user_id
+			 from reward r
+			 left join users_goods_reword ugr on r.id=ugr.id
+			 left join users u1 on u1.user_id=ugr.user_id
+			 left join goods g1 on g1.good_id=ugr.good_id
+			 where r.id=#{id}
+    </select>
+
+    <!--获取到-->
+    <select id="getMoneyType" resultMap="money">
+          select r.id,r.money,r.limits,reward_time,num,descs,cost
+          from reward r
+			 left join users_goods_reword ugr on r.id=ugr.id
+			 left join users u1 on u1.user_id=ugr.user_id
+			 left join goods g1 on g1.good_id=ugr.good_id
+			 where r.id=#{id}
+    </select>
+
+
+    <select id="getMoneyByGoodId" resultMap="money">
+        select id,money,limits,reward_time,num,descs,cost from reward where good_id=#{goodId}
+
+    </select>
+
+
+
+</mapper>

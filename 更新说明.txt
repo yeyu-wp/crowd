@@ -1,0 +1,22 @@
+更新的时候只更新对应的项目模块
+所有用户的session字段的el表达式 ${CURRENT_USER.userName} 
+
+所有的退出功能
+在前端的jsp页面修改一下这个字段 复制+JS代码
+jsp
+
+<li><a onclick="exit()"><i class="glyphicon glyphicon-off"></i> 退出系统</a></li>
+
+JS
+
+ //用户退出的JS
+    function exit() {
+        if (confirm("确定要退出当前用户吗？")){
+            //如果是 去跳转到退出的业务
+            window.location.href="${pageContext.request.contextPath}/user/exit";
+        }else {
+            //啥也不做
+        }
+    }
+千峰众筹的字 添加这个
+"${pageContext.request.contextPath}/user/index"

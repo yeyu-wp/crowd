@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crowd.ssm.user.dao.IUserDao">
+    <resultMap id="usersMap" type="com.crowd.ssm.user.service.bo.User">
+        <id property="userId" column="user_id"></id>
+        <result property="userName" column="user_name"></result>
+        <result property="password" column="password"></result>
+        <result property="userEmail" column="user_email"></result>
+        <result property="userType" column="user_type"></result>
+        <result property="userCompany" column="user_company"></result>
+        <result property="userAccttype" column="user_accttype"></result>
+    </resultMap>
+    <select id="selectUserNameByName" resultMap="usersMap">
+        select user_id,user_name,password,user_type,user_accttype
+
+        from users
+        where user_name=#{userName}
+    </select>
+
+    <!--用户注册-->
+    <insert id="addUser">
+        insert into users(user_id,user_name,password,user_email,user_type)
+        values (#{userId},#{userName},#{password},#{userEmail},#{userType})
+    </insert>
+
+    <!--查询所有用户-->
+    <select id="findAllUser" resultMap="usersMap">
+        select user_id,user_name,password,user_email,user_type from users order by user_type
+    </select>
+
+    <!--管理员添加用户-->
+    <insert id="saveUser">
+        insert into users(user_id,user_name,password,user_email,user_type) values(#{userId},#{userName},#{password},#{userEmail},#{userType})
+    </insert>
+    <!--    删除用户-->
+    <delete id="delUser" parameterType="java.lang.Integer">
+        delete from users where user_id=#{userId}
+    </delete>
+    <!--  通过用户id查找用户-->
+    <select id="findUserById" resultMap="usersMap" parameterType="Integer">
+        select user_id,user_name,user_email,user_company from users where user_id=#{userId}
+    </select>
+    <!--  修改用户信息-->
+    <update id="updUserById">
+        update users set user_id=#{userId},user_name=#{userName},user_email=#{userEmail}
+        where user_id=#{userId}
+    </update>
+    <!--查询用户的实名认证信息-->
+    <select id="selectUserById" resultMap="usersMap">
+        select user_accttype from users where user_id=#{userId}
+    </select>
+
+    <!--    批量删除用户-->
+    <delete id="deleteByBath">
+    delete from users where
+    user_id in
+    <foreach collection="list" item="item"  open="("
+             separator="," close=")">
+        #{item.userId}
+    </foreach>
+</delete>
+
+    <!-- 添加用户认证信息-->
+    <insert id="addUserInfo">
+        insert into persons(user_id,person_name,person_idcard,person_tel,person_idcardimg) values
+        (#{userId},#{personName},#{personIdCard},#{personTel},#{personIdCardImg})
+    </insert>
+    <!--修改用户认证字段的属性-->
+    <update id="updateUserAccttypeById">
+        update users set user_accttype=1 where user_id=#{userId}
+    </update>
+<!--查询用户名通过id-->
+    <select id="selectUserNameById" resultMap="usersMap">
+        select user_name from users where user_id=#{userId}
+    </select>
+
+</mapper>

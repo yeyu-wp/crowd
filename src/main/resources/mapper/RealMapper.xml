@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crowd.ssm.user.dao.IRealDao">
+    <resultMap id="realMap" type="com.crowd.ssm.user.service.bo.Real">
+        <id property="prId" column="pr_id"></id>
+        <result property="prName" column="pr_name"/>
+        <result property="prVersion" column="pr_version"/>
+        <result property="jName" column="j_name"/>
+        <result property="userName" column="user_name"/>
+    </resultMap>
+    <select id="findAllReal" parameterType="String" resultMap="realMap">
+        select * from auth_cert
+    </select>
+</mapper>

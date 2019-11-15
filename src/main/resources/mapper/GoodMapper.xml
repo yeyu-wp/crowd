@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crowd.ssm.good.dao.IGoodDao">
+
+    <resultMap id="goodsMap" type="com.crowd.ssm.good.service.bo.Good" extends="users">
+        <id column="good_id" property="goodId"/>
+
+        <result column="user_id" property="userId"/>
+
+        <result column="good_name" property="goodName"/>
+
+        <result column="good_price" property="goodPrice"/>
+
+        <result column="good_sale" property="goodSale"/>
+
+        <result column="good_date" property="goodDate"/>
+
+        <result column="good_type" property="goodType"/>
+
+        <result column="good_desc" property="goodDesc"/>
+
+        <result column="good_top" property="goodTop"/>
+
+        <result column="good_imgurl" property="goodImgUrl"/>
+
+        <result column="good_descimg" property="goodDescImg"/>
+
+        <result column="good_startdate" property="goodStartDate"/>
+        <result column="order_sale" property="orderSale"/>
+        <result column="counts" property="counts"/>
+        <result column="order_creatdate" property="orderCreateDate"/>
+
+
+        <result column="user_good_status" property="goodAndUserStatus"></result>
+        <result column="order_id" property="orderId"></result>
+
+    </resultMap>
+    <resultMap id="users" type="com.crowd.ssm.user.service.bo.User">
+        <id property="userId" column="user_id"></id>
+        <result property="userName" column="user_name"></result>
+
+    </resultMap>
+
+    <resultMap id="advsMap" type="com.crowd.ssm.good.service.bo.ADV" extends="goodsMap">
+        <id column="adv_id" property="advId"></id>
+        <result column="user_id" property="userId"></result>
+        <result column="good_id" property="goodId"></result>
+        <result column="adv_status" property="advStatus"></result>
+
+
+
+    </resultMap>
+    <insert id="addGood" useGeneratedKeys="true" keyProperty="goodId" keyColumn="good_id"
+            parameterType="com.crowd.ssm.good.service.bo.Good">
+        insert into goods(good_id,good_name,good_type,user_id,good_remarks,
+        good_price,good_date,good_desc,good_tel,good_localtel,good_imgurl,good_descimg)
+        values (#{goodId},#{goodName},#{goodType},#{userId},#{goodRemarks},
+        #{goodPrice},#{goodDate},#{goodDesc},#{goodTel},#{goodLocalTel},#{goodImgUrl},#{goodDescImg})
+    </insert>
+    <insert id="addUserAndGood">
+        insert into user_good(user_id,user_good_status,good_id,order_id)
+        values (#{userId},#{goodAndUserStatus},#{goodId},#{orderId})
+    </insert>
+
+    <select id="selectGoodById" resultMap="goodsMap">
+        select  g.good_id,g.good_name,g.good_price,g.good_sale,g.good_date,g.good_type,g.good_top,ug.user_good_status,
+	o.order_sale,o.counts,o.order_creatdate
+    from user_good ug LEFT JOIN goods g
+		on  g.good_id = ug.good_id LEFT JOIN orders o
+		on o.order_id=ug.order_id
+     where ug.user_id=#{userId}
+
+    </select>
+
+    <select id="selectAllGood" resultMap="goodsMap">
+    select good_id,good_name,good_price,good_sale,good_date,good_type,good_desc,good_top,good_imgurl,good_descimg,good_startdate,good_top
+    from goods
+    </select>
+    <select id="selectGoodByGoodId" resultMap="goodsMap">
+        select good_id,good_name,good_price,good_sale,good_date,good_type,good_imgurl,good_descimg,good_startdate
+        from goods where good_id=#{goodId}
+    </select>
+    <select id="selectUserByGoodId" resultMap="users">
+         select user_id from user_good where good_id=#{goodId}
+     </select>
+    <select id="selectAdv"   resultMap="advsMap">
+         select adv_status,ug.good_id,user_name,good_name from users u
+         LEFT JOIN advs ug on u.user_id=ug.user_id
+          LEFT JOIN goods g on ug.good_id=g.good_id  where adv_status=0 or adv_status=1
+          limit ${(startIndex-1)*pageSize},${pageSize}
+    </select>
+
+
+    <!--修改GoodTop-->
+
+    <update id="updateGoodTop">
+        update goods set good_top=999 where good_id=#{goodId}
+    </update>
+
+    <update id="updateGoodDown">
+        update goods set good_top=0 where good_id=#{goodId}
+    </update>
+    <update id="updateAdvStatus">
+                update advs set adv_status=1 where good_id=#{goodId}
+
+    </update>
+    <update id="updateAdvStatus1">
+                update advs set adv_status=0 where good_id=#{goodId}
+
+    </update>
+    <!--添加广告审批-->
+    <insert id="addADV">
+        insert  into advs(good_id,user_id) values (
+      #{goodId},#{userId})
+    </insert>
+<!--查询广告的数量-->
+    <select id="selectADVCount" resultType="java.lang.Integer">
+        select count(*) from advs
+    </select>
+<!--修改中间表的status-->
+    <update id="upUserAndGoodStatus">
+        update user_good set user_good_status=0
+         where user_id=${userId} AND good_id=${goodId}
+    </update>
+</mapper>
